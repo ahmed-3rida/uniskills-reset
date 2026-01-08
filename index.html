@@ -171,6 +171,7 @@
             return {
                 access_token: urlParams.get('access_token') || hashParams.get('access_token'),
                 refresh_token: urlParams.get('refresh_token') || hashParams.get('refresh_token'),
+                code: urlParams.get('code') || hashParams.get('code'),
                 type: urlParams.get('type') || hashParams.get('type'),
                 error: urlParams.get('error') || hashParams.get('error'),
                 error_description: urlParams.get('error_description') || hashParams.get('error_description')
@@ -186,7 +187,8 @@
                 return;
             }
             
-            if (!params.access_token) {
+            // التحقق من وجود access_token أو code
+            if (!params.access_token && !params.code) {
                 showStatus('رابط غير صالح. يرجى طلب رابط جديد لإعادة تعيين كلمة المرور.', 'error');
                 return;
             }
@@ -194,7 +196,13 @@
             showLoading(true);
             
             // إنشاء رابط التطبيق
-            const appUrl = `uniskills://reset-password?access_token=${params.access_token}&refresh_token=${params.refresh_token || ''}&type=${params.type || 'recovery'}`;
+            let appUrl = 'uniskills://reset-password?';
+            
+            if (params.access_token) {
+                appUrl += `access_token=${params.access_token}&refresh_token=${params.refresh_token || ''}&type=${params.type || 'recovery'}`;
+            } else if (params.code) {
+                appUrl += `code=${params.code}&type=recovery`;
+            }
             
             // محاولة فتح التطبيق
             window.location.href = appUrl;
@@ -226,7 +234,7 @@
         // فتح التطبيق تلقائياً عند تحميل الصفحة
         window.onload = function() {
             const params = getUrlParams();
-            if (params.access_token && !params.error) {
+            if ((params.access_token || params.code) && !params.error) {
                 setTimeout(openApp, 1000); // انتظار ثانية واحدة ثم فتح التطبيق
             }
         };
