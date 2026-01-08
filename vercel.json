@@ -1,4 +1,9 @@
 {
+  "functions": {
+    "api/exchange-code.js": {
+      "runtime": "nodejs18.x"
+    }
+  },
   "rewrites": [
     {
       "source": "/reset-password",
