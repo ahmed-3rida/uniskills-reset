@@ -28,9 +28,10 @@ SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_ANON_KEY=your-anon-key
 ```
 
-### الملفات الجديدة
-- `api/exchange-code.js` - API endpoint
-- `.env.example` - مثال للمتغيرات
+### الملفات المحدثة
+- `api/exchange-code.js` - API endpoint (محدث)
+- `vercel.json` - إزالة functions config (مبسط)
+- `package.json` - إضافة dependencies
 
 ## خطوات النشر
 
@@ -43,6 +44,11 @@ SUPABASE_ANON_KEY=your-anon-key
 ```bash
 cd web_reset_password
 vercel --prod
+```
+
+إذا ظهرت أخطاء في الـ runtime، جرب:
+```bash
+vercel --prod --force
 ```
 
 ### 3. اختبار التطبيق
@@ -64,6 +70,18 @@ flutter run --debug
 ```
 uniskills://reset-password?access_token=TOKEN&refresh_token=TOKEN&type=recovery
 ```
+
+## استكشاف الأخطاء
+
+### إذا فشل النشر:
+1. تأكد من إعداد Environment Variables
+2. جرب `vercel --prod --force`
+3. تحقق من Vercel logs
+
+### إذا فشل الـ API:
+1. تحقق من Environment Variables في Vercel
+2. راجع Function logs في Vercel Dashboard
+3. تأكد من صحة Supabase URL و API Key
 
 ## الفوائد
 - ✅ حل نهائي لمشكلة PKCE

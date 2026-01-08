@@ -19,13 +19,21 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Code is required' });
   }
 
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    console.error('Missing Supabase environment variables');
+    return res.status(500).json({ error: 'Server configuration error' });
+  }
+
   try {
     // Exchange code for tokens using Supabase REST API
-    const response = await fetch(`${process.env.SUPABASE_URL}/auth/v1/token?grant_type=pkce`, {
+    const response = await fetch(`${supabaseUrl}/auth/v1/token?grant_type=pkce`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'apikey': process.env.SUPABASE_ANON_KEY,
+        'apikey': supabaseKey,
       },
       body: JSON.stringify({
         auth_code: code,
