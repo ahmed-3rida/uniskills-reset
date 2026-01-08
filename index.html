@@ -201,7 +201,9 @@
             if (params.access_token) {
                 appUrl += `access_token=${params.access_token}&refresh_token=${params.refresh_token || ''}&type=${params.type || 'recovery'}`;
             } else if (params.code) {
-                appUrl += `code=${params.code}&type=recovery`;
+                // بدلاً من إرسال الـ code، نرسل رابط كامل للتطبيق ليتعامل معه
+                const fullUrl = encodeURIComponent(window.location.href);
+                appUrl += `callback_url=${fullUrl}&type=recovery`;
             }
             
             // محاولة فتح التطبيق
