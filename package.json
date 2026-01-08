@@ -1,0 +1,14 @@
+{
+  "name": "uniskills-reset-password",
+  "version": "1.0.0",
+  "description": "UniSkills Password Reset Web Interface",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'No build step required'",
+    "deploy": "vercel --prod"
+  },
+  "keywords": ["uniskills", "password-reset", "deep-link"],
+  "author": "UniSkills Team",
+  "license": "MIT"
+}
