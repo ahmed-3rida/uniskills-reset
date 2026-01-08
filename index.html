@@ -179,7 +179,7 @@
         }
 
         // فتح التطبيق مع المعاملات
-        async function openApp() {
+        function openApp() {
             const params = getUrlParams();
             
             if (params.error) {
@@ -195,37 +195,17 @@
             
             showLoading(true);
             
+            // إنشاء رابط التطبيق
             let appUrl = 'uniskills://reset-password?';
             
             if (params.access_token) {
-                // إذا كان لدينا access_token مباشرة
                 appUrl += `access_token=${params.access_token}&refresh_token=${params.refresh_token || ''}&type=${params.type || 'recovery'}`;
-                window.location.href = appUrl;
             } else if (params.code) {
-                // إذا كان لدينا code، نحتاج لتحويله لـ access_token
-                try {
-                    const response = await fetch('/api/exchange-code', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ code: params.code }),
-                    });
-                    
-                    if (response.ok) {
-                        const tokens = await response.json();
-                        appUrl += `access_token=${tokens.access_token}&refresh_token=${tokens.refresh_token || ''}&type=recovery`;
-                        window.location.href = appUrl;
-                    } else {
-                        throw new Error('Failed to exchange code');
-                    }
-                } catch (error) {
-                    console.error('Code exchange failed:', error);
-                    showStatus('فشل في معالجة الرابط. يرجى المحاولة مرة أخرى.', 'error');
-                    showLoading(false);
-                    return;
-                }
+                appUrl += `code=${params.code}&type=recovery`;
             }
+            
+            // محاولة فتح التطبيق
+            window.location.href = appUrl;
             
             // إخفاء التحميل بعد ثانيتين
             setTimeout(() => {
