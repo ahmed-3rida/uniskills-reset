@@ -24,6 +24,4 @@ yarn-error.log*
 ehthumbs.db
 Thumbs.db
 
-# Keep only public folder for deployment
-index.html
-favicon.ico
+# Public folder is included in deployment

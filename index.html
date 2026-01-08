@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إعادة تعيين كلمة المرور - UniSkills</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="إعادة تعيين كلمة المرور لتطبيق UniSkills - المهارات الرقمية">
+    <meta name="keywords" content="UniSkills, إعادة تعيين كلمة المرور, المهارات الرقمية">
+    <meta name="author" content="UniSkills Team">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="إعادة تعيين كلمة المرور - UniSkills">
+    <meta property="og:description" content="إعادة تعيين كلمة المرور لتطبيق UniSkills">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="ar_SA">
+    
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            direction: rtl;
+        }
+        
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        p {
+            color: #666;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s;
+            margin: 0.5rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .status {
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .loading {
+            display: none;
+            margin: 1rem 0;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo pulse">U</div>
+        <h1>إعادة تعيين كلمة المرور</h1>
+        <p>سيتم فتح التطبيق تلقائياً لإعادة تعيين كلمة المرور الخاصة بك</p>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>جاري فتح التطبيق...</p>
+        </div>
+        
+        <div class="status" id="status"></div>
+        
+        <button class="btn" onclick="openApp()" id="openBtn">فتح التطبيق</button>
+        <a href="#" class="btn" onclick="downloadApp()" style="background: #28a745;">تحميل التطبيق</a>
+    </div>
+
+    <script>
+        // استخراج المعاملات من الرابط
+        function getUrlParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const hashParams = new URLSearchParams(window.location.hash.substring(1));
+            
+            return {
+                access_token: urlParams.get('access_token') || hashParams.get('access_token'),
+                refresh_token: urlParams.get('refresh_token') || hashParams.get('refresh_token'),
+                type: urlParams.get('type') || hashParams.get('type'),
+                error: urlParams.get('error') || hashParams.get('error'),
+                error_description: urlParams.get('error_description') || hashParams.get('error_description')
+            };
+        }
+
+        // فتح التطبيق مع المعاملات
+        function openApp() {
+            const params = getUrlParams();
+            
+            if (params.error) {
+                showStatus('حدث خطأ: ' + (params.error_description || params.error), 'error');
+                return;
+            }
+            
+            if (!params.access_token) {
+                showStatus('رابط غير صالح. يرجى طلب رابط جديد لإعادة تعيين كلمة المرور.', 'error');
+                return;
+            }
+            
+            showLoading(true);
+            
+            // إنشاء رابط التطبيق
+            const appUrl = `uniskills://reset-password?access_token=${params.access_token}&refresh_token=${params.refresh_token || ''}&type=${params.type || 'recovery'}`;
+            
+            // محاولة فتح التطبيق
+            window.location.href = appUrl;
+            
+            // إخفاء التحميل بعد ثانيتين
+            setTimeout(() => {
+                showLoading(false);
+                showStatus('إذا لم يتم فتح التطبيق تلقائياً، يرجى التأكد من تثبيت التطبيق أو تحميله.', 'error');
+            }, 2000);
+        }
+
+        function downloadApp() {
+            // يمكن تغيير هذا الرابط لرابط التحميل الفعلي
+            window.open('https://play.google.com/store/apps/details?id=com.uniskills.app', '_blank');
+        }
+
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+            statusDiv.style.display = 'block';
+        }
+
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+            document.getElementById('openBtn').style.display = show ? 'none' : 'inline-block';
+        }
+
+        // فتح التطبيق تلقائياً عند تحميل الصفحة
+        window.onload = function() {
+            const params = getUrlParams();
+            if (params.access_token && !params.error) {
+                setTimeout(openApp, 1000); // انتظار ثانية واحدة ثم فتح التطبيق
+            }
+        };
+    </script>
+</body>
+</html>
